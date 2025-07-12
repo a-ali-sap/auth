@@ -1,0 +1,20 @@
+<h2>Participation Spaces</h2>
+
+<% if @participation_spaces.present? %>
+  <ul class="list-group mb-4">
+    <% @participation_spaces.each do |space| %>
+      <li class="list-group-item">
+        <strong><%= space.name %></strong> (<%= space.status.humanize %>)<br>
+        <%= truncate(space.description, length: 100) %><br>
+        Allowed Age Groups: <%= space.allowed_age_groups.join(", ") %><br>
+        Spots: <%= space.current_participants %> / <%= space.max_participants %><br>
+        <%= link_to 'Show', organization_participation_space_path(@organization, space), class: 'btn btn-sm btn-primary mt-2' %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No participation spaces found.</p>
+<% end %>
+
+<%= link_to 'New Participation Space', new_organization_participation_space_path(@organization), class: 'btn btn-success' %>
+<%= link_to 'Back to Organization', organization_path(@organization), class: 'btn btn-secondary mt-3' %>

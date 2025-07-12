@@ -1,0 +1,187 @@
+<div class="row">
+  <div class="col-md-12">
+    <h1>Welcome, <%= current_user.full_name %>!</h1>
+    
+    <% if current_user.minor? && !current_user.age_verified? %>
+      <div class="alert alert-warning">
+        <h5>Age Verification Required</h5>
+        <p>As a minor, you need to verify your age to participate in certain activities.</p>
+        <%= link_to "Start Verification", new_age_verification_path, class: "btn btn-warning" %>
+      </div>
+    <% end %>
+    
+    <% if @pending_consents.any? %>
+      <div class="alert alert-info">
+        <h5>Pending Parental Consents</h5>
+        <p>You have <%= @pending_consents.count %> pending parental consent requests.</p>
+        <% @pending_consents.each do |consent| %>
+          <div class="mb-2">
+            <strong><%= consent.participation_space.name %></strong> - 
+            Sent to <%= consent.parent_email %>
+            <%= link_to "View", consent, class: "btn btn-sm btn-outline-primary ms-2" %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-md-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">My Organizations</h5>
+        <h2 class="text-primary"><%= @stats[:organizations_count] %></h2>
+        <p class="card-text">Organizations you're a member of</p>
+        <%= link_to "View All", organizations_path, class: "btn btn-primary btn-sm" %>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Active Participations</h5>
+        <h2 class="text-success"><%= @stats[:active_participations] %></h2>
+        <p class="card-text">Currently participating in</p>
+        <%= link_to "View All", organizations_path, class: "btn btn-success btn-sm" %>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Pending Requests</h5>
+        <h2 class="text-warning"><%= @stats[:pending_requests] %></h2>
+        <p class="card-text">Membership requests awaiting approval</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Account Status</h5>
+        <div class="mb-2">
+          <span class="badge bg-info fs-6"><%= current_user.age_group.humanize %></span>
+        </div>
+        <div class="mb-2">
+          <span class="badge bg-<%= current_user.active? ? 'success' : 'secondary' %> fs-6">
+            <%= current_user.status.humanize %>
+          </span>
+        </div>
+        <% if current_user.age_verified? %>
+          <span class="badge bg-success fs-6">Age Verified</span>
+        <% elsif current_user.minor? %>
+          <span class="badge bg-warning fs-6">Verification Needed</span>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header">
+        <h5>Recent Activity</h5>
+      </div>
+      <div class="card-body">
+        <% if @recent_participations.any? %>
+          <div class="list-group list-group-flush">
+            <% @recent_participations.each do |participation| %>
+              <div class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                  <div class="fw-bold">
+                    <%= link_to participation.participation_space.name, 
+                        [participation.participation_space.organization, participation.participation_space],
+                        class: "text-decoration-none" %>
+                  </div>
+                  <small class="text-muted">
+                    <%= participation.participation_space.organization.name %> • 
+                    Joined <%= time_ago_in_words(participation.created_at) %> ago
+                  </small>
+                </div>
+                <span class="badge bg-<%= participation.status == 'active' ? 'success' : 'secondary' %> rounded-pill">
+                  <%= participation.status.humanize %>
+                </span>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-muted">No recent activity. Start by joining an organization!</p>
+          <%= link_to "Browse Organizations", organizations_path, class: "btn btn-primary" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">
+        <h5>My Organizations</h5>
+      </div>
+      <div class="card-body">
+        <% if @user_organizations.any? %>
+          <% @user_organizations.limit(5).each do |organization| %>
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>
+                    <%= link_to organization.name, organization, class: "text-decoration-none" %>
+                  </strong><br>
+                  <small class="text-muted">
+                    <%= current_user.organization_role_in(organization)&.humanize || 'Member' %>
+                    <% unless organization.is_public? %>
+                      • <span class="badge bg-warning">Private</span>
+                    <% end %>
+                  </small>
+                </div>
+              </div>
+            </div>
+          <% end %>
+          
+          <% if @user_organizations.count > 5 %>
+            <p class="text-muted">... and <%= @user_organizations.count - 5 %> more</p>
+          <% end %>
+          
+          <div class="text-center mt-3">
+            <%= link_to "View All Organizations", organizations_path, class: "btn btn-outline-primary btn-sm" %>
+          </div>
+        <% else %>
+          <p class="text-muted">You're not a member of any organizations yet.</p>
+          <%= link_to "Browse Organizations", organizations_path, class: "btn btn-primary btn-sm" %>
+        <% end %>
+      </div>
+    </div>
+    
+    <% if current_user.minor? %>
+      <div class="card mt-3">
+        <div class="card-header">
+          <h5>Age Verification Status</h5>
+        </div>
+        <div class="card-body">
+          <% if @age_verification %>
+            <p><strong>Status:</strong> 
+              <span class="badge bg-<%= @age_verification.verified? ? 'success' : 'warning' %>">
+                <%= @age_verification.verification_status.humanize %>
+              </span>
+            </p>
+            <% if @age_verification.pending? %>
+              <p class="text-muted">Your verification is being reviewed.</p>
+            <% elsif @age_verification.verified? %>
+              <p class="text-success">Age verified on <%= @age_verification.verified_at.strftime("%m/%d/%Y") %></p>
+            <% elsif @age_verification.rejected? %>
+              <p class="text-danger">Verification was rejected. Please submit new documents.</p>
+              <%= link_to "Resubmit", new_age_verification_path, class: "btn btn-warning btn-sm" %>
+            <% end %>
+          <% else %>
+            <p class="text-muted">Age verification not started.</p>
+            <%= link_to "Start Verification", new_age_verification_path, class: "btn btn-warning btn-sm" %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

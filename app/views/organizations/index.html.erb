@@ -1,0 +1,17 @@
+<h2>Organizations</h2>
+
+<% if @organizations.present? %>
+  <ul class="list-group mb-4">
+    <% @organizations.each do |organization| %>
+      <li class="list-group-item">
+        <strong><%= organization.name %></strong><br>
+        <%= truncate(organization.description, length: 100) %><br>
+        <%= link_to 'Show', organization_path(organization), class: 'btn btn-sm btn-primary mt-2' %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No organizations found.</p>
+<% end %>
+
+<%= link_to 'New Organization', new_organization_path, class: 'btn btn-success' %>

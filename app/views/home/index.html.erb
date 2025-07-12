@@ -1,0 +1,102 @@
+<div class="hero-section bg-primary text-white py-5 mb-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-6">
+        <h1 class="display-4 fw-bold">Welcome to Auth Access Control</h1>
+        <p class="lead">
+          A comprehensive platform for organization-based access control with 
+          age-appropriate participation rules and parental consent management.
+        </p>
+        <div class="mt-4">
+          <%= link_to "Sign Up", new_user_registration_path, class: "btn btn-light btn-lg me-3" %>
+          <%= link_to "Log In", new_user_session_path, class: "btn btn-outline-light btn-lg" %>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="text-center">
+          <i class="fas fa-users fa-5x opacity-75"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <i class="fas fa-building fa-3x text-primary mb-3"></i>
+          <h5 class="card-title">Organization Management</h5>
+          <p class="card-text">
+            Create and manage organizations with role-based access control 
+            and membership verification systems.
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <i class="fas fa-child fa-3x text-success mb-3"></i>
+          <h5 class="card-title">Age-Based Rules</h5>
+          <p class="card-text">
+            Automatic age verification and parental consent workflows 
+            ensure safe participation for all age groups.
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <i class="fas fa-chart-bar fa-3x text-info mb-3"></i>
+          <h5 class="card-title">Analytics & Reporting</h5>
+          <p class="card-text">
+            Comprehensive analytics and reporting tools for organization 
+            owners and administrators.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <% if @public_organizations.any? %>
+    <div class="row mt-5">
+      <div class="col-md-12">
+        <h2 class="text-center mb-4">Featured Organizations</h2>
+        <div class="row">
+          <% @public_organizations.each do |organization| %>
+            <div class="col-md-4 mb-4">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title"><%= organization.name %></h5>
+                  <p class="card-text">
+                    <%= truncate(organization.description, length: 100) %>
+                  </p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">
+                      <%= organization.organization_type.humanize %> • 
+                      <%= organization.members.count %> members
+                    </small>
+                    <%= link_to "Learn More", organization, class: "btn btn-outline-primary btn-sm" %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  
+  <div class="row mt-5">
+    <div class="col-md-12 text-center">
+      <h2>Ready to get started?</h2>
+      <p class="lead">Join our platform and start managing your organization's access control today.</p>
+      <%= link_to "Create Account", new_user_registration_path, class: "btn btn-primary btn-lg" %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+<h2><%= @participation_space.name %></h2>
+<p><strong>Description:</strong> <%= @participation_space.description %></p>
+<p><strong>Type:</strong> <%= @participation_space.participation_type.humanize %></p>
+<p><strong>Status:</strong> <%= @participation_space.status.humanize %></p>
+<p><strong>Spots:</strong> <%= @participation_space.current_participants %> / <%= @participation_space.max_participants %></p>
+<p><strong>Start Date:</strong> <%= @participation_space.start_date&.strftime('%Y-%m-%d') %></p>
+<p><strong>End Date:</strong> <%= @participation_space.end_date&.strftime('%Y-%m-%d') %></p>
+
+
+<% if !@user_participation && !@participation_space.full? %>
+  <%= button_to 'Join', organization_participation_space_participations_path(@organization, @participation_space), method: :post, class: 'btn btn-success mb-3' %>
+<% elsif @user_participation %>
+  <span class="badge bg-success mb-3">You are participating</span>
+<% elsif @participation_space.full? %>
+  <span class="badge bg-danger mb-3">Space is full</span>
+<% end %>
+
+<%= link_to 'Edit', edit_organization_participation_space_path(@organization, @participation_space), class: 'btn btn-primary' %>
+<%= link_to 'Back to Participation Spaces', organization_participation_spaces_path(@organization), class: 'btn btn-secondary' %>

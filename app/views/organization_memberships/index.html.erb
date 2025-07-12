@@ -1,0 +1,13 @@
+<h3>Memberships for <%= @organization.name %></h3>
+<ul class="list-group mb-4">
+  <% @organization.organization_memberships.each do |membership| %>
+    <li class="list-group-item">
+      <%= membership.user.try(:full_name) || membership.user.email %> - <%= membership.role.humanize %> - <%= membership.status.humanize %>
+      <% if membership.pending? && (current_user == @organization.owner || @membership&.can_manage_members?) %>
+        <%= button_to 'Approve', approve_organization_membership_path(@organization, membership), method: :patch, class: 'btn btn-success btn-sm' %>
+        <%= button_to 'Reject', reject_organization_membership_path(@organization, membership), method: :patch, class: 'btn btn-danger btn-sm' %>
+      <% end %>
+    </li>
+  <% end %>
+</ul>
+<%= link_to 'Back to Organization', organization_path(@organization), class: 'btn btn-secondary' %>

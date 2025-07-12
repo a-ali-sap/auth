@@ -1,0 +1,11 @@
+<h2>Age Verification Details</h2>
+
+<p><strong>Date of Birth:</strong> <%= @age_verification.date_of_birth&.strftime('%Y-%m-%d') || 'N/A' %></p>
+<p><strong>Verification Method:</strong> <%= @age_verification.verification_method&.humanize || 'N/A' %></p>
+<% if @age_verification.document? %>
+  <p><strong>Document:</strong> <%= link_to 'View Document', @age_verification.document.url, target: '_blank' %></p>
+<% end %>
+<p><strong>Status:</strong> <%= @age_verification.verification_status&.humanize || 'N/A' %></p>
+
+<%= link_to 'Edit', edit_age_verification_path(@age_verification), class: 'btn btn-primary' if defined?(edit_age_verification_path) %>
+<%= link_to 'Back', root_path, class: 'btn btn-secondary' %>

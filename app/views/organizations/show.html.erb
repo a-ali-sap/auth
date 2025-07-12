@@ -1,0 +1,37 @@
+<h2><%= @organization.name %></h2>
+<p><strong>Description:</strong> <%= @organization.description %></p>
+<p><strong>Type:</strong> <%= @organization.organization_type.humanize %></p>
+<p><strong>Status:</strong> <%= @organization.status.humanize if @organization.respond_to?(:status) %></p>
+<p><strong>Owner:</strong> <%= @organization.owner.try(:full_name) || @organization.owner.try(:email) %></p>
+
+<h3 class="mt-4">Participation Spaces</h3>
+<%= link_to 'New Participation Space', new_organization_participation_space_path(@organization), class: 'btn btn-success mb-3' %>
+<% if @participation_spaces.present? %>
+  <ul class="list-group mb-4">
+    <% @participation_spaces.each do |space| %>
+      <li class="list-group-item">
+        <strong><%= space.name %></strong> (<%= space.status.humanize %>)<br>
+        <%= truncate(space.description, length: 100) %><br>
+        Allowed Age Groups: <%= space.allowed_age_groups.join(", ") %><br>
+        Spots: <%= space.current_participants %> / <%= space.max_participants %><br>
+        <%= link_to 'Show', organization_participation_space_path(@organization, space), class: 'btn btn-sm btn-primary mt-2' %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No participation spaces found.</p>
+<% end %>
+
+
+<%# Join Organization button for non-members %>
+<% if @membership.nil? && @organization.can_user_join?(current_user) %>
+  <%= form_with url: organization_memberships_path(@organization), method: :post, local: true do %>
+    <%= submit_tag(@organization.is_public? ? 'Join Organization' : 'Request Membership', class: 'btn btn-primary mb-3') %>
+  <% end %>
+<% elsif @membership&.pending? %>
+  <div class="alert alert-info mb-3">Membership request pending approval.</div>
+<% elsif @membership&.approved? %>
+  <div class="alert alert-success mb-3">You are a member of this organization.</div>
+<% end %>
+
+<%= link_to 'Back to Organizations', organizations_path, class: 'btn btn-secondary mt-3' %>
