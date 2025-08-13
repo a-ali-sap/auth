@@ -10,7 +10,7 @@ gem 'sass-rails', '>= 6'
 gem 'webpacker', '~> 5.0'
 gem 'turbo-rails'
 gem 'stimulus-rails'
-gem 'jbuilder', '~> 2.7'
+gem 'jbuilder', '~> 2.14'
 gem 'bootsnap', '>= 1.4.4', require: false
 gem 'image_processing', '~> 1.2'
 
